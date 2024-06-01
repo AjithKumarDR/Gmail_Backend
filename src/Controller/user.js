@@ -1,6 +1,7 @@
 import userModel from '../Models/user.js'
 import emailModel from '../Models/Email.js'
 import emailStatusModel from '../Models/EmailStatus.js'
+import emailService from '../utils/emailService.js'
 import Auth from '../utils/auth.js'
 
 const getAllUsers = async(req,res)=>{
@@ -125,6 +126,7 @@ const RecoveryMail = async(req, res) => {
 
     const email = new emailModel(payload);
     email.save();
+    await emailService.sendRealMail(payload)
     const Emailid =email.id;
     if(Emailid){
     let reciveuser = await userModel.findOne({email:user.Recoveryemail})
@@ -208,6 +210,7 @@ const saveSentEmails = async(req, res) => {
       
       const email = new emailModel(req.body.payload);
       email.save();
+      await emailService.sendRealMail(req.body.payload)
       const Emailid =email.id;
       let sentuser = await userModel.findOne({email:req.body.payload.from})
       let reciveuser = await userModel.findOne({email:req.body.payload.to})
